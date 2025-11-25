@@ -1,12 +1,15 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { motion } from 'framer-motion';
 import NatureIcon from '@mui/icons-material/Nature';
+import LanguageIcon from '@mui/icons-material/Language';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { language, toggleLanguage, t } = useLanguage();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -33,31 +36,38 @@ const Navbar = () => {
           </Link>
         </Typography>
 
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <IconButton color="inherit" onClick={toggleLanguage} title={`Switch to ${language === 'en' ? 'Hindi' : 'English'}`}>
+            <LanguageIcon />
+            <Typography variant="caption" sx={{ ml: 0.5 }}>
+              {language === 'en' ? 'हिं' : 'EN'}
+            </Typography>
+          </IconButton>
+          
           {user ? (
             <>
               <Button color="inherit" component={Link} to="/dashboard">
-                Dashboard
+                {t('dashboard')}
               </Button>
               <Button color="inherit" component={Link} to="/submit-complaint">
-                Report Issue
+                {t('submitComplaint')}
               </Button>
               {(user.role === 'admin' || user.role === 'officer') && (
                 <Button color="inherit" component={Link} to="/admin">
-                  Admin Panel
+                  {t('adminDashboard')}
                 </Button>
               )}
               <Button color="inherit" onClick={handleLogout}>
-                Logout ({user.name})
+                {t('logout')} ({user.name})
               </Button>
             </>
           ) : (
             <>
               <Button color="inherit" component={Link} to="/login">
-                Login
+                {t('login')}
               </Button>
               <Button color="inherit" component={Link} to="/register">
-                Register
+                {t('register')}
               </Button>
             </>
           )}

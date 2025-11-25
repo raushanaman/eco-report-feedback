@@ -89,15 +89,72 @@ router.get('/my-complaints', auth, async (req, res) => {
   }
 });
 
-// Submit feedback
+// Submit mandatory user feedback for closed complaints
+router.post('/:complaintId/user-feedback', auth, async (req, res) => {
+  try {
+    console.log('User feedback submission request:', {
+      complaintId: req.params.complaintId,
+      userId: req.userId,
+      body: req.body
+    });
+    
+    const { rating, comment } = req.body;
+    
+    if (!rating || !comment) {
+      console.log('Missing rating or comment');
+      return res.status(400).json({ message: 'Rating and comment are required' });
+    }
+    
+    const complaint = await Complaint.findOne({ 
+      complaintId: req.params.complaintId,
+      userId: req.userId 
+    });
+    
+    console.log('Found complaint:', complaint ? complaint.complaintId : 'Not found');
+    
+    if (!complaint) {
+      return res.status(404).json({ message: 'Complaint not found' });
+    }
+    
+    console.log('Complaint status:', complaint.status);
+    
+    if (complaint.status !== 'closed') {
+      return res.status(400).json({ message: 'Feedback can only be submitted for closed complaints' });
+    }
+    
+    complaint.userFeedback = {
+      rating,
+      comment,
+      submittedAt: new Date()
+    };
+    
+    await complaint.save();
+    console.log('User feedback saved successfully');
+    
+    res.json({ message: 'Feedback submitted successfully' });
+  } catch (error) {
+    console.error('Submit user feedback error:', error);
+    res.status(500).json({ message: 'Server error: ' + error.message });
+  }
+});
+
+// Submit feedback (old route - keeping for compatibility)
 router.post('/:complaintId/feedback', auth, async (req, res) => {
   try {
+    console.log('Regular feedback submission request:', {
+      complaintId: req.params.complaintId,
+      userId: req.userId,
+      body: req.body
+    });
+    
     const { rating, comment } = req.body;
     
     const complaint = await Complaint.findOne({ 
       complaintId: req.params.complaintId,
       userId: req.userId 
     });
+    
+    console.log('Found complaint for regular feedback:', complaint ? complaint.complaintId : 'Not found');
     
     if (!complaint) {
       return res.status(404).json({ message: 'Complaint not found' });
@@ -110,11 +167,34 @@ router.post('/:complaintId/feedback', auth, async (req, res) => {
     };
     
     await complaint.save();
+    console.log('Regular feedback saved successfully');
     
     res.json({ message: 'Feedback submitted successfully' });
   } catch (error) {
     console.error('Submit feedback error:', error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: 'Server error: ' + error.message });
+  }
+});
+
+// Test route to set complaint status to closed (for testing feedback)
+router.put('/:complaintId/test-close', auth, async (req, res) => {
+  try {
+    const complaint = await Complaint.findOne({ 
+      complaintId: req.params.complaintId,
+      userId: req.userId 
+    });
+    
+    if (!complaint) {
+      return res.status(404).json({ message: 'Complaint not found' });
+    }
+    
+    complaint.status = 'closed';
+    await complaint.save();
+    
+    res.json({ message: 'Complaint status set to closed for testing' });
+  } catch (error) {
+    console.error('Test close error:', error);
+    res.status(500).json({ message: 'Server error: ' + error.message });
   }
 });
 

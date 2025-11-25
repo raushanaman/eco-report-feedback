@@ -2,11 +2,14 @@ import React from 'react';
 import { Container, Typography, Button, Box, Grid, Card, CardContent } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../contexts/LanguageContext';
 import ReportIcon from '@mui/icons-material/Report';
 import NatureIcon from '@mui/icons-material/Nature';
 import GroupIcon from '@mui/icons-material/Group';
 
 const Home = () => {
+  const { t } = useLanguage();
+  
   return (
     <div>
       <div className="hero-section">
@@ -17,10 +20,10 @@ const Home = () => {
             transition={{ duration: 1 }}
           >
             <Typography variant="h2" component="h1" gutterBottom className="floating-animation">
-              Save Our Environment
+              {t('saveEnvironment')}
             </Typography>
             <Typography variant="h5" component="p" gutterBottom>
-              Report local environmental issues and help make your community better
+              {t('reportIssues')}
             </Typography>
             <Box mt={4}>
               <Button
@@ -31,7 +34,7 @@ const Home = () => {
                 className="pulse-animation"
                 sx={{ mr: 2, mb: 2 }}
               >
-                Report an Issue
+                {t('reportAnIssue')}
               </Button>
               <Button
                 variant="outlined"
@@ -40,7 +43,7 @@ const Home = () => {
                 to="/register"
                 sx={{ color: 'white', borderColor: 'white', mb: 2 }}
               >
-                Join Us
+                {t('joinUs')}
               </Button>
             </Box>
           </motion.div>
@@ -49,7 +52,7 @@ const Home = () => {
 
       <Container maxWidth="lg" sx={{ py: 8 }}>
         <Typography variant="h3" component="h2" textAlign="center" gutterBottom className="gradient-text">
-          How It Works
+          {t('howItWorks')}
         </Typography>
         
         <Grid container spacing={4} mt={4}>

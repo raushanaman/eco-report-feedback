@@ -37,6 +37,11 @@ const complaintSchema = new mongoose.Schema({
     comment: String,
     submittedAt: Date
   },
+  userFeedback: {
+    rating: { type: Number, min: 1, max: 5 },
+    comment: String,
+    submittedAt: Date
+  },
   createdAt: { type: Date, default: Date.now },
   resolvedAt: Date,
   dueDate: { type: Date, default: () => new Date(Date.now() + 15 * 24 * 60 * 60 * 1000) }

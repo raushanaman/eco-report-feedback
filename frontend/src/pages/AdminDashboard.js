@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Container, Typography, Grid, Card, CardContent, Button, Box,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, Chip, Dialog, DialogTitle, DialogContent, TextField,
+  Paper, Chip, Dialog, DialogTitle, DialogContent,
   FormControl, InputLabel, Select, MenuItem, ImageList, ImageListItem
 } from '@mui/material';
 import { adminService } from '../services/authService';
@@ -138,6 +138,7 @@ const AdminDashboard = () => {
               <TableCell>Submitted By</TableCell>
               <TableCell>Date</TableCell>
               <TableCell>Media</TableCell>
+              <TableCell>User Feedback</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -180,6 +181,27 @@ const AdminDashboard = () => {
                   ) : (
                     <Typography variant="caption" color="textSecondary">
                       No media
+                    </Typography>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {complaint.userFeedback ? (
+                    <Box>
+                      <Chip 
+                        label={`★ ${complaint.userFeedback.rating}/5`} 
+                        size="small" 
+                        color="success"
+                        sx={{ mb: 0.5 }}
+                      />
+                      <Typography variant="caption" display="block">
+                        "{complaint.userFeedback.comment.substring(0, 50)}..."
+                      </Typography>
+                    </Box>
+                  ) : complaint.status === 'closed' ? (
+                    <Chip label="Pending" size="small" color="warning" />
+                  ) : (
+                    <Typography variant="caption" color="textSecondary">
+                      N/A
                     </Typography>
                   )}
                 </TableCell>
@@ -233,6 +255,31 @@ const AdminDashboard = () => {
                     </ImageListItem>
                   ))}
                 </ImageList>
+              </Box>
+            )}
+            
+            {updateDialog.complaint?.userFeedback && (
+              <Box mb={2} p={2} bgcolor="success.light" borderRadius={1}>
+                <Typography variant="subtitle2" gutterBottom>
+                  User Feedback:
+                </Typography>
+                <Typography variant="body2">
+                  Rating: {updateDialog.complaint.userFeedback.rating}/5 ⭐
+                </Typography>
+                <Typography variant="body2" mt={1}>
+                  Comment: "{updateDialog.complaint.userFeedback.comment}"
+                </Typography>
+                <Typography variant="caption" color="textSecondary">
+                  Submitted: {new Date(updateDialog.complaint.userFeedback.submittedAt).toLocaleString()}
+                </Typography>
+              </Box>
+            )}
+            
+            {updateDialog.complaint?.status === 'closed' && !updateDialog.complaint?.userFeedback && (
+              <Box mb={2} p={2} bgcolor="warning.light" borderRadius={1}>
+                <Typography variant="body2" color="warning.dark">
+                  ⚠️ User feedback is required before closing this complaint
+                </Typography>
               </Box>
             )}
             

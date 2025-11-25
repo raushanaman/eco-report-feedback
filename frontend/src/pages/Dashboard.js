@@ -6,6 +6,7 @@ import {
 import { motion } from 'framer-motion';
 import { complaintService } from '../services/authService';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Dashboard = () => {
   const [complaints, setComplaints] = useState([]);
@@ -22,6 +23,7 @@ const Dashboard = () => {
   const [success, setSuccess] = useState('');
 
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchComplaints();
@@ -51,17 +53,37 @@ const Dashboard = () => {
 
   const handleFeedbackSubmit = async () => {
     try {
-      await complaintService.submitFeedback(
-        feedbackDialog.complaintId,
-        feedbackData.rating,
-        feedbackData.comment
-      );
-      setSuccess('Feedback submitted successfully!');
+      setError('');
+      setSuccess('');
+      
+      // Check if this is for a closed complaint (mandatory feedback)
+      const complaint = complaints.find(c => c.complaintId === feedbackDialog.complaintId);
+      console.log('Submitting feedback for complaint:', complaint);
+      console.log('Feedback data:', feedbackData);
+      
+      if (complaint?.status === 'closed') {
+        console.log('Submitting user feedback for closed complaint');
+        await complaintService.submitUserFeedback(
+          feedbackDialog.complaintId,
+          feedbackData.rating,
+          feedbackData.comment
+        );
+      } else {
+        console.log('Submitting regular feedback');
+        await complaintService.submitFeedback(
+          feedbackDialog.complaintId,
+          feedbackData.rating,
+          feedbackData.comment
+        );
+      }
+      
+      setSuccess(t('feedbackSubmittedSuccess'));
       setFeedbackDialog({ open: false, complaintId: '' });
       setFeedbackData({ rating: 0, comment: '' });
       fetchComplaints();
     } catch (err) {
-      setError('Failed to submit feedback');
+      console.error('Feedback submission error:', err);
+      setError(err.response?.data?.message || t('failedToSubmitFeedback'));
     }
   };
 
@@ -70,14 +92,14 @@ const Dashboard = () => {
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom className="gradient-text">
-        Welcome back, {user?.name}!
+        {t('welcomeBack')}, {user?.name}!
       </Typography>
       
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
       <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 4 }}>
-        Your Complaints ({complaints.length})
+        {t('yourComplaints')} ({complaints.length})
       </Typography>
 
       <Grid container spacing={3}>
@@ -125,6 +147,26 @@ const Dashboard = () => {
                     </Typography>
                   )}
                   
+                  {complaint.status === 'closed' && !complaint.userFeedback && (
+                    <Alert severity="warning" sx={{ mt: 1 }}>
+                      <Typography variant="body2">
+                        Feedback Required!
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        color="warning"
+                        onClick={() => setFeedbackDialog({
+                          open: true,
+                          complaintId: complaint.complaintId
+                        })}
+                        sx={{ mt: 1 }}
+                      >
+                        Provide Mandatory Feedback
+                      </Button>
+                    </Alert>
+                  )}
+                  
                   {complaint.status === 'resolved' && !complaint.feedback && (
                     <Button
                       variant="contained"
@@ -139,12 +181,26 @@ const Dashboard = () => {
                     </Button>
                   )}
                   
+
+                  
                   {complaint.feedback && (
                     <Box mt={1}>
                       <Typography variant="caption" display="block">
                         Your Rating:
                       </Typography>
                       <Rating value={complaint.feedback.rating} readOnly size="small" />
+                    </Box>
+                  )}
+                  
+                  {complaint.userFeedback && (
+                    <Box mt={1}>
+                      <Typography variant="caption" display="block" color="success.main">
+                        Feedback Submitted:
+                      </Typography>
+                      <Rating value={complaint.userFeedback.rating} readOnly size="small" />
+                      <Typography variant="body2" sx={{ mt: 0.5 }}>
+                        "{complaint.userFeedback.comment}"
+                      </Typography>
                     </Box>
                   )}
                 </CardContent>
@@ -185,7 +241,8 @@ const Dashboard = () => {
             
             <TextField
               fullWidth
-              label="Additional Comments"
+              label={complaints.find(c => c.complaintId === feedbackDialog.complaintId)?.status === 'closed' 
+                ? "Comments (Required)" : "Additional Comments"}
               multiline
               rows={4}
               value={feedbackData.comment}
@@ -194,13 +251,16 @@ const Dashboard = () => {
                 comment: e.target.value
               })}
               margin="normal"
+              required={complaints.find(c => c.complaintId === feedbackDialog.complaintId)?.status === 'closed'}
             />
             
             <Box display="flex" gap={2} mt={3}>
               <Button
                 variant="contained"
                 onClick={handleFeedbackSubmit}
-                disabled={feedbackData.rating === 0}
+                disabled={feedbackData.rating === 0 || 
+                  (complaints.find(c => c.complaintId === feedbackDialog.complaintId)?.status === 'closed' && 
+                   !feedbackData.comment.trim())}
               >
                 Submit Feedback
               </Button>

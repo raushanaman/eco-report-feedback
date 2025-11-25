@@ -51,6 +51,8 @@ router.put('/complaints/:id/status', auth, adminAuth, async (req, res) => {
       return res.status(404).json({ message: 'Complaint not found' });
     }
     
+    // Allow closing - user feedback will be requested after closing
+    
     complaint.status = status;
     if (status === 'resolved') {
       complaint.resolvedAt = new Date();

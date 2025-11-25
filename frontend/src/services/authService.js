@@ -61,6 +61,19 @@ export const complaintService = {
     });
     return response.data;
   },
+
+  submitUserFeedback: async (complaintId, rating, comment) => {
+    const response = await api.post(`/complaints/${complaintId}/user-feedback`, {
+      rating,
+      comment,
+    });
+    return response.data;
+  },
+
+  testCloseComplaint: async (complaintId) => {
+    const response = await api.put(`/complaints/${complaintId}/test-close`);
+    return response.data;
+  },
 };
 
 export const adminService = {
