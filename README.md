@@ -1,6 +1,15 @@
 # EcoReport - Environmental Feedback System
+Website Description
 
-A MERN stack application for reporting environmental issues to government authorities.
+A MERN stack application for reporting environmental issues to government authorities. 
+
+This platform is a comprehensive Complaint Management System designed to streamline the way users submit, track, and manage public grievances. Built with a React frontend (Material-UI) and a robust Express.js backend powered by MongoDB, the system offers a seamless, secure, and responsive user experience.
+
+Users can easily register and log in, submit complaints with attached media files (images/videos), and track the real-time status of their submissions. The platform supports file uploads through secure local storage and provides timely status updates to keep users informed. Once a complaint is resolved, users can also provide feedback to improve service quality.
+
+The system includes role-based authentication, distinguishing between public users and administrators. Admin users can access an advanced dashboard where they can visualize statistics, review all complaints, manage statuses, and view submitted media directly inside the dashboard.
+
+Designed with fully responsive layouts, the platform ensures accessibility across desktops, tablets, and mobile devices, offering a smooth and intuitive experience for every user.
 
 ## 🚀 Quick Start
 
