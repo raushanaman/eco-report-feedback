@@ -1,0 +1,9 @@
+@echo off
+echo Killing existing processes on ports 3001 and 5001...
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :3001 ^| findstr LISTENING') do taskkill /PID %%a /F 2>nul
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5001 ^| findstr LISTENING') do taskkill /PID %%a /F 2>nul
+echo Starting EcoReport on ports 5001 and 3001...
+start "Backend-5001" cmd /k "cd backend && set PORT=5001 && npm start"
+timeout /t 3 /nobreak >nul
+start "Frontend-3001" cmd /k "cd frontend && set PORT=3001 && npm start"
+echo Both servers starting...

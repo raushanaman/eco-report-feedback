@@ -1,0 +1,21 @@
+{
+  "name": "ecoreport-fullstack",
+  "version": "1.0.0",
+  "description": "Environmental Feedback System - Full Stack",
+  "scripts": {
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "dev:3001": "concurrently \"npm run backend:5001\" \"npm run frontend:3001\"",
+    "dev:3002": "concurrently \"npm run backend:5002\" \"npm run frontend:3002\"",
+    "backend": "cd backend && npm start",
+    "backend:5001": "cd backend && set PORT=5001 && npm start",
+    "backend:5002": "cd backend && set PORT=5002 && npm start",
+    "frontend": "cd frontend && npm start",
+    "frontend:3001": "cd frontend && set PORT=3001 && npm start",
+    "frontend:3002": "cd frontend && set PORT=3002 && npm start",
+    "kill-ports": "kill-ports.bat",
+    "install-all": "npm install && cd backend && npm install && cd frontend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
