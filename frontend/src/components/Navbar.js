@@ -46,12 +46,11 @@ const Navbar = () => {
           
           {user ? (
             <>
-              <Button color="inherit" component={Link} to="/dashboard">
-                {t('dashboard')}
-              </Button>
-              <Button color="inherit" component={Link} to="/submit-complaint">
-                {t('submitComplaint')}
-              </Button>
+              {!(user.role === 'admin' || user.role === 'officer') && (
+                <Button color="inherit" component={Link} to="/submit-complaint">
+                  {t('submitComplaint')}
+                </Button>
+              )}
               {(user.role === 'admin' || user.role === 'officer') && (
                 <Button color="inherit" component={Link} to="/admin">
                   {t('adminDashboard')}
