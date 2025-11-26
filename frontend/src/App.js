@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import AdminLogin from './pages/AdminLogin';
 import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
 import SubmitComplaint from './pages/SubmitComplaint';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -44,7 +45,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={
                 <ProtectedRoute>
-                  {/* <Dashboard /> */}
+                  <Dashboard />
                 </ProtectedRoute>
               } />
               <Route path="/submit-complaint" element={

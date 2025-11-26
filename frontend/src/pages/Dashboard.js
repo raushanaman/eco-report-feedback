@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
   Container, Typography, Grid, Card, CardContent, Chip, Button,
-  Dialog, DialogTitle, DialogContent, Rating, TextField, Box, Alert
+  Dialog, DialogTitle, DialogContent, Rating, TextField, Box, Alert, Paper
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import { complaintService } from '../services/authService';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import EnvironmentalSlider from '../components/EnvironmentalSlider';
+import DashboardStats from '../components/DashboardStats';
 
 const Dashboard = () => {
   const [complaints, setComplaints] = useState([]);
@@ -98,9 +100,29 @@ const Dashboard = () => {
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
-      <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 4 }}>
-        {t('yourComplaints')} ({complaints.length})
-      </Typography>
+      {/* Environmental Awareness Slider */}
+      <EnvironmentalSlider />
+
+      {/* Dashboard Stats */}
+      <DashboardStats complaints={complaints} />
+
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: 3, 
+          mb: 3, 
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          borderRadius: 3
+        }}
+      >
+        <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
+          🌱 {t('yourComplaints')} ({complaints.length})
+        </Typography>
+        <Typography variant="body1" sx={{ opacity: 0.9 }}>
+          Track your environmental reports and see the positive impact you're making in your community.
+        </Typography>
+      </Paper>
 
       <Grid container spacing={3}>
         {complaints.map((complaint, index) => (
@@ -110,7 +132,19 @@ const Dashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <Card 
+                sx={{ 
+                  height: '100%', 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  borderRadius: 3,
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+                  '&:hover': {
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
+                    transform: 'translateY(-2px)',
+                    transition: 'all 0.3s ease'
+                  }
+                }}>
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography variant="h6" component="h3" gutterBottom>
                     {complaint.title}
