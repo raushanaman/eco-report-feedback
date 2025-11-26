@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard';
 import SubmitComplaint from './pages/SubmitComplaint';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './utils/errorBoundary';
 import './App.css';
 
 const theme = createTheme({
@@ -31,11 +32,12 @@ const theme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <LanguageProvider>
-        <AuthProvider>
-          <Router>
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <LanguageProvider>
+          <AuthProvider>
+            <Router>
             <div className="App">
               <Navbar />
               <Routes>
@@ -60,10 +62,11 @@ function App() {
               } />
               </Routes>
             </div>
-          </Router>
-        </AuthProvider>
-      </LanguageProvider>
-    </ThemeProvider>
+            </Router>
+          </AuthProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

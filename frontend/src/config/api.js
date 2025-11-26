@@ -1,18 +1,24 @@
 // Dynamic API configuration
 const getApiConfig = () => {
+  // Use environment variable for production, fallback to local development
+  const isProduction = process.env.NODE_ENV === 'production';
+  const apiUrl = process.env.REACT_APP_API_URL;
+  
+  if (isProduction && apiUrl) {
+    return {
+      baseURL: `${apiUrl}/api`,
+      mediaURL: apiUrl
+    };
+  }
+  
+  // Development configuration
   const hostname = window.location.hostname;
   const protocol = window.location.protocol;
-  
-  // Default backend port
   const backendPort = 5000;
   
-  // Construct backend URL
-  const baseURL = `${protocol}//${hostname}:${backendPort}/api`;
-  const mediaURL = `${protocol}//${hostname}:${backendPort}`;
-  
   return {
-    baseURL,
-    mediaURL
+    baseURL: `${protocol}//${hostname}:${backendPort}/api`,
+    mediaURL: `${protocol}//${hostname}:${backendPort}`
   };
 };
 
