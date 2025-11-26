@@ -11,20 +11,31 @@ const adminRoutes = require('./routes/admin');
 const app = express();
 
 // Middleware - Allow all origins and ports
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     // Allow requests with no origin (mobile apps, etc.)
+//     if (!origin) return callback(null, true);
+    
+    
+//     // Allow all localhost and local network requests
+//     if (origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('192.168.')) {
+//       return callback(null, true);
+//     }
+    
+//     // Allow all origins for development
+//     return callback(null, true);
+//   },
+//   credentials: true
+// }));
+const frontend_url = process.env.FRONTENT_ORIGIN_URI
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, etc.)
-    if (!origin) return callback(null, true);
-    
-    // Allow all localhost and local network requests
-    if (origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('192.168.')) {
-      return callback(null, true);
-    }
-    
-    // Allow all origins for development
-    return callback(null, true);
-  },
-  credentials: true
+        // origin: 'https://e-commerce-blush-iota-63.vercel.app', // for production
+        // origin: 'http://localhost:5173', // for development
+    origin: frontend_url,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['set-cookie']
 }));
 
 app.use(express.json());
