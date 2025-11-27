@@ -5,6 +5,7 @@ import {
   Paper, Chip, Dialog, DialogTitle, DialogContent,
   FormControl, InputLabel, Select, MenuItem, ImageList, ImageListItem
 } from '@mui/material';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { adminService } from '../services/authService';
 import getApiConfig from '../config/api';
 
@@ -134,6 +135,7 @@ const AdminDashboard = () => {
               <TableCell>ID</TableCell>
               <TableCell>Title</TableCell>
               <TableCell>Category</TableCell>
+              <TableCell>Location</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Submitted By</TableCell>
               <TableCell>Date</TableCell>
@@ -148,6 +150,21 @@ const AdminDashboard = () => {
                 <TableCell>{complaint.complaintId}</TableCell>
                 <TableCell>{complaint.title}</TableCell>
                 <TableCell>{complaint.category.replace('_', ' ')}</TableCell>
+                <TableCell>
+                  <Box sx={{ maxWidth: 200, display: 'flex', alignItems: 'flex-start', gap: 0.5 }}>
+                    <LocationOnIcon sx={{ fontSize: 16, color: 'primary.main', mt: 0.2 }} />
+                    <Box>
+                      <Typography variant="body2" noWrap title={complaint.location?.address}>
+                        {complaint.location?.address || 'No address provided'}
+                      </Typography>
+                      {complaint.location?.coordinates?.lat && complaint.location?.coordinates?.lng && (
+                        <Typography variant="caption" color="textSecondary">
+                          {complaint.location.coordinates.lat.toFixed(4)}, {complaint.location.coordinates.lng.toFixed(4)}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
+                </TableCell>
                 <TableCell>
                   <Chip
                     label={complaint.status.replace('_', ' ').toUpperCase()}
@@ -238,6 +255,36 @@ const AdminDashboard = () => {
             <Typography variant="body2" color="textSecondary" gutterBottom>
               ID: {updateDialog.complaint?.complaintId}
             </Typography>
+
+            
+            {updateDialog.complaint?.location && (
+              <Box mb={2} p={2} bgcolor="info.light" borderRadius={1}>
+                <Typography variant="subtitle2" gutterBottom>
+                  📍 Location Details:
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  <strong>Address:</strong> {updateDialog.complaint.location.address}
+                </Typography>
+                {updateDialog.complaint.location.coordinates?.lat && updateDialog.complaint.location.coordinates?.lng && (
+                  <Box>
+                    <Typography variant="body2" gutterBottom>
+                      <strong>Coordinates:</strong> {updateDialog.complaint.location.coordinates.lat}, {updateDialog.complaint.location.coordinates.lng}
+                    </Typography>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      onClick={() => {
+                        const { lat, lng } = updateDialog.complaint.location.coordinates;
+                        window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
+                      }}
+                      sx={{ mt: 1 }}
+                    >
+                      View on Google Maps
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+            )}
             
             {updateDialog.complaint?.media && updateDialog.complaint.media.length > 0 && (
               <Box mb={2}>

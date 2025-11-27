@@ -197,6 +197,26 @@ const SubmitComplaint = () => {
                 />
               </Grid>
 
+              {formData.lat && formData.lng && (
+                <Grid item xs={12}>
+                  <Box display="flex" alignItems="center" gap={1} p={1} bgcolor="success.light" borderRadius={1}>
+                    <LocationOnIcon sx={{ color: 'success.main' }} />
+                    <Typography variant="body2" sx={{ flexGrow: 1 }}>
+                      📍 Location captured: {parseFloat(formData.lat).toFixed(4)}, {parseFloat(formData.lng).toFixed(4)}
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => {
+                        window.open(`https://www.google.com/maps?q=${formData.lat},${formData.lng}`, '_blank');
+                      }}
+                    >
+                      View on Map
+                    </Button>
+                  </Box>
+                </Grid>
+              )}
+
               <Grid item xs={12}>
                 <Box
                   {...getRootProps()}

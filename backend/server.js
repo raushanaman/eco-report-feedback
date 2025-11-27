@@ -27,11 +27,8 @@ const app = express();
 //   },
 //   credentials: true
 // }));
-const frontend_url = process.env.FRONTENT_ORIGIN_URI
 app.use(cors({
-        // origin: 'https://e-commerce-blush-iota-63.vercel.app', // for production
-        // origin: 'http://localhost:5173', // for development
-    origin: frontend_url,
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -58,10 +55,36 @@ app.use('/api/auth', authRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/admin', adminRoutes);
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/feedback-db')
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch(err => console.log('❌ MongoDB connection error:', err));
+// MongoDB connection with retry logic
+const connectDB = async () => {
+  try {
+    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/feedback-db';
+    
+    await mongoose.connect(mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
+    
+    console.log('✅ MongoDB connected successfully');
+  } catch (error) {
+    console.log('❌ MongoDB connection error:', error.message);
+    
+    if (error.message.includes('IP') || error.message.includes('whitelist')) {
+      console.log('🔧 SOLUTION: Add your IP to MongoDB Atlas whitelist:');
+      console.log('   1. Go to https://cloud.mongodb.com/');
+      console.log('   2. Navigate to Network Access');
+      console.log('   3. Click "Add IP Address"');
+      console.log('   4. Add your current IP or use 0.0.0.0/0 for all IPs');
+    }
+    
+    console.log('🔄 Retrying connection in 5 seconds...');
+    setTimeout(connectDB, 5000);
+  }
+};
+
+connectDB();
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
