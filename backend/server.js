@@ -27,8 +27,9 @@ const app = express();
 //   },
 //   credentials: true
 // }));
+const frontend_url = process.env.FRONTENT_ORIGIN_URI
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
+    origin: frontend_url,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
