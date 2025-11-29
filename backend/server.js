@@ -27,9 +27,12 @@ const app = express();
 //   },
 //   credentials: true
 // }));
-const frontend_url = process.env.FRONTENT_ORIGIN_URI
 app.use(cors({
-    origin: frontend_url,
+  // for development
+    // origin: 'http://localhost:3000',
+
+    // production
+    origin: 'https://fluffy-centaur-c88e70.netlify.app/',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -38,6 +41,8 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.options('*', cors());
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
